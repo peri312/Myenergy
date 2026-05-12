@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>MyEnergy - Recensioni Verificate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #10b981; --dark-bg: #0b0f1a; --panel-bg: #161e2d; --text-main: #f8fafc; --text-dim: #94a3b8; --star: #fbbf24; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: var(--text-main); margin: 0; }
+        
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: var(--panel-bg); border-bottom: 1px solid #2d3748; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; }
+        .nav-links a:hover { color: var(--primary); }
+        .btn-action { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+
+        .container { max-width: 1000px; margin: 50px auto; padding: 0 20px; }
+        .stats-header { text-align: center; margin-bottom: 50px; }
+        .rating-big { font-size: 4rem; font-weight: 800; color: var(--star); margin: 0; }
+        
+        /* FILTRI */
+        .filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
+        .filter-btn { background: var(--panel-bg); color: var(--text-dim); border: 1px solid #2d3748; padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* GRIGLIA RECENSIONI */
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .review-card { background: var(--panel-bg); padding: 25px; border-radius: 15px; border: 1px solid #2d3748; }
+        .stars { color: var(--star); font-size: 1.2rem; margin-bottom: 10px; }
+        .author { font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; }
+        .verified { color: var(--primary); font-size: 0.8rem; }
+        .text { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; }
+
+        /* MODALE RECENSIONE */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; }
+        .modal-content { background:var(--panel-bg); padding:30px; border-radius:20px; width:90%; max-width:500px; text-align:center; }
+        textarea { width: 100%; height: 100px; padding: 15px; border-radius: 8px; border: 1px solid #2d3748; background: #090c14; color: white; margin-top: 15px; box-sizing: border-box;}
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">⚡ MyEnergy</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="recensioni.html" style="color:var(--primary)">Recensioni</a>
+            <a href="assistenza.html">Assistenza</a>
+        </div>
+        <button class="btn-action" onclick="document.getElementById('review-modal').style.display='flex'">Scrivi una Recensione</button>
+    </nav>
+
+    <div class="container">
+        <div class="stats-header">
+            <h1>Cosa dicono i nostri clienti</h1>
+            <h2 class="rating-big">4.8</h2>
+            <div class="stars">★★★★★</div>
+            <p style="color:var(--text-dim)">Basato su 1.240 recensioni certificate</p>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="filtra('tutte')">Tutte</button>
+            <button class="filter-btn" onclick="filtra('5')">5 Stelle</button>
+            <button class="filter-btn" onclick="filtra('4')">4 Stelle</button>
+        </div>
+
+        <div class="reviews-grid" id="grid-recensioni">
+            <div class="review-card" data-stars="5">
+                <div class="author"><span>Luca Bianchi</span> <span class="verified">✓ Verificato</span></div>
+                <div class="stars">★★★★★</div>
+                <div class="text">"L'app per gestire l'impianto è fantastica. Ho ridotto le bollette del 60% nel primo mese!"</div>
+            </div>
+            <div class="review-card" data-stars="5">
+                <div class="author"><span>TechCorp SpA</span> <span class="verified">✓ Verificato B2B</span></div>
+                <div class="stars">★★★★★</div>
+                <div class="text">"Installazione su tre capannoni industriali rapida e indolore. Assistenza eccellente."</div>
+            </div>
+            <div class="review-card" data-stars="4">
+                <div class="author"><span>Marta G.</span> <span class="verified">✓ Verificato</span></div>
+                <div class="stars">★★★★☆</div>
+                <div class="text">"Ottimo prodotto, l'unico piccolo ritardo è stato nella consegna dei pannelli (1 giorno di ritardo), ma per il resto perfetti."</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="review-modal">
+        <div class="modal-content">
+            <h2>Valuta la tua esperienza</h2>
+            <div class="stars" style="font-size: 2rem; cursor: pointer;">☆ ☆ ☆ ☆ ☆</div>
+            <textarea placeholder="Racconta la tua esperienza (pubblica)..."></textarea>
+            <button class="btn-action" style="width:100%; margin-top:20px;" onclick="inviaRecensione()">Pubblica Recensione</button>
+            <button style="margin-top:15px; background:transparent; color:var(--text-dim); border:none; cursor:pointer;" onclick="document.getElementById('review-modal').style.display='none'">Annulla</button>
+        </div>
+    </div>
+
+    <script>
+        function filtra(stelle) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.review-card').forEach(card => {
+                if (stelle === 'tutte' || card.getAttribute('data-stars') === stelle) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function inviaRecensione() {
+            alert('Grazie! La tua recensione è stata inviata e sarà visibile dopo la moderazione.');
+            document.getElementById('review-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

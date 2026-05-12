@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>MyEnergy - Console Amministratore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f59e0b; --dark-bg: #0b0f1a; --panel-bg: #161e2d; --text-dim: #94a3b8; --danger: #ef4444;}
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: white; margin: 0; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .card { background: var(--panel-bg); border-radius: 20px; padding: 25px; border: 1px solid #2d3748; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--text-dim); padding: 10px; border-bottom: 1px solid #2d3748; }
+        td { padding: 15px 10px; border-bottom: 1px solid #1f2937; }
+        .btn-chiudi { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-logout { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight:bold; transition: 0.3s;}
+        .btn-logout:hover { background: #ef4444; color: white;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🛡️ Admin Console - MyEnergy</h1>
+        <button class="btn-logout" onclick="eseguiLogout()">Disconnetti</button>
+    </div>
+
+    <div class="card">
+        <h3>🚨 Ticket Aperti & Richieste dal Bot</h3>
+        <table>
+            <thead><tr><th>ID</th><th>Utente/Origine</th><th>Richiesta</th><th>Azione</th></tr></thead>
+            <tbody id="tabella-ticket"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>⭐ Recensioni Ricevute</h3>
+        <table>
+            <thead><tr><th>Utente</th><th>Voto</th><th>Commento</th><th>Data</th></tr></thead>
+            <tbody id="tabella-recensioni"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:3000/api";
+        const session = JSON.parse(localStorage.getItem('myenergy_session'));
+        if(!session || session.type !== 'admin') window.location.href = 'index.html';
+
+        async function caricaDati() {
+            // Carica Ticket
+            const resT = await fetch(`${API_URL}/tickets`);
+            const tickets = await resT.json();
+            const tabT = document.getElementById('tabella-ticket');
+            tabT.innerHTML = '';
+            tickets.filter(t => t.status === 'aperto').forEach(t => {
+                const origineBot = t.azienda.includes('Via Bot') ? '🤖 ' : '🏢 ';
+                tabT.innerHTML += `<tr>
+                    <td>${t.id}</td>
+                    <td style="color:#f59e0b; font-weight:bold;">${origineBot} ${t.azienda}</td>
+                    <td>${t.testo}</td>
+                    <td><button class="btn-chiudi" onclick="chiudiTicket('${t.id}')">Risolvi</button></td>
+                </tr>`;
+            });
+
+            // Carica Recensioni
+            const resR = await fetch(`${API_URL}/reviews`);
+            const reviews = await resR.json();
+            const tabR = document.getElementById('tabella-recensioni');
+            tabR.innerHTML = '';
+            reviews.reverse().forEach(r => {
+                tabR.innerHTML += `<tr>
+                    <td><strong>${r.autore}</strong></td>
+                    <td style="color:#f59e0b; font-size:1.2rem;">${'★'.repeat(r.voto)}</td>
+                    <td><i>"${r.testo}"</i></td>
+                    <td style="color:#94a3b8; font-size:0.8rem;">${r.data}</td>
+                </tr>`;
+            });
+        }
+
+        async function chiudiTicket(id) {
+            await fetch(`${API_URL}/tickets/chiudi`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id })
+            });
+            caricaDati();
+        }
+
+        function eseguiLogout() { localStorage.removeItem('myenergy_session'); window.location.href = 'index.html'; }
+
+        caricaDati();
+        setInterval(caricaDati, 5000); // L'admin si aggiorna da solo ogni 5 secondi!
+    </script>
+</body>
+</html>
