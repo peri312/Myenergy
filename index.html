@@ -3,118 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyEnergy - Accesso</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>MyEnergy - Accesso Piattaforma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #10b981; --primary-hover: #059669; --dark-bg: #0b0f1a; --panel-bg: #161e2d; --text-main: #f8fafc; --text-dim: #94a3b8; }
-        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: var(--text-main); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .auth-container { background: var(--panel-bg); padding: 40px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 100%; max-width: 400px; border: 1px solid #2d3748; transition: 0.4s; }
-        .brand { text-align: center; font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 30px; letter-spacing: -1px; }
-        .tabs { display: flex; background: #090c14; border-radius: 12px; padding: 5px; margin-bottom: 30px; }
-        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px; font-weight: 600; color: var(--text-dim); transition: 0.3s; }
-        .tab.active { background: var(--panel-bg); color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; }
-        input, select { width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #2d3748; background: #090c14; color: white; font-size: 1rem; box-sizing: border-box; transition: 0.3s; }
-        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-        button { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        button:hover { background: var(--primary-hover); transform: translateY(-2px); }
-        button:disabled { background: #374151; cursor: not-allowed; transform: none; }
-        .toggle-link { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-dim); }
-        .toggle-link span { color: var(--primary); cursor: pointer; font-weight: bold; }
-        .hidden { display: none; }
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --primary: #10b981; --primary-hover: #059669; --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-light: #64748b; --error-bg: #fef2f2; --error-text: #ef4444; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; color: var(--text); }
+        
+        /* Layout diviso */
+        .hero { flex: 1.2; background: linear-gradient(135deg, rgba(16,185,129,0.85) 0%, rgba(15,23,42,0.9) 100%), url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1920&q=80') center/cover; display: flex; flex-direction: column; justify-content: center; padding: 4rem; color: white; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
+        .hero p { font-size: 1.25rem; opacity: 0.9; max-width: 500px; line-height: 1.6; }
+        .hero-features { margin-top: 3rem; display: flex; gap: 2rem; }
+        .feature { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+
+        .auth-container { width: 480px; background: var(--surface); display: flex; flex-direction: column; justify-content: center; padding: 3rem; box-shadow: -10px 0 40px rgba(0,0,0,0.05); z-index: 10; overflow-y: auto; }
+        .brand { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; }
+        
+        h2 { font-size: 1.8rem; margin: 0 0 0.5rem 0; }
+        p.subtitle { color: var(--text-light); margin-bottom: 2rem; }
+
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; font-weight: 500; display: none; align-items: center; gap: 10px; animation: slideDown 0.3s ease; }
+        .alert.error { background: var(--error-bg); color: var(--error-text); border: 1px solid #fca5a5; }
+
+        .form-group { margin-bottom: 1.5rem; position: relative; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+        .input-wrapper { position: relative; }
+        .input-wrapper i.icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        .input-wrapper i.icon-right { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-light); cursor: pointer; transition: 0.2s; }
+        .input-wrapper i.icon-right:hover { color: var(--primary); }
+        
+        input, select { width: 100%; padding: 14px 40px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; color: var(--text); background: var(--bg); transition: all 0.3s; box-sizing: border-box; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; background: var(--surface); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+
+        button.btn-submit { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        button.btn-submit:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        
+        .switch-mode { text-align: center; margin-top: 1.5rem; color: var(--text-light); font-size: 0.95rem; }
+        .switch-mode a { color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @media(max-width: 900px) { .hero { display: none; } .auth-container { width: 100%; padding: 2rem; } }
     </style>
 </head>
 <body>
-    <div class="auth-container fade-in">
-        <div class="brand">⚡ MyEnergy</div>
-        <div class="tabs">
-            <div id="tab-login" class="tab active" onclick="switchTab('login')">Login</div>
-            <div id="tab-register" class="tab" onclick="switchTab('register')">Registrati</div>
+
+    <div class="hero">
+        <h1>Gestione intelligente<br>della tua energia.</h1>
+        <p>Monitora i consumi, gestisci i tuoi impianti e richiedi assistenza in tempo reale.</p>
+        <div class="hero-features">
+            <div class="feature"><i class="fas fa-chart-pie"></i> Statistiche Live</div>
+            <div class="feature"><i class="fas fa-headset"></i> Supporto 24/7</div>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <div class="brand"><i class="fas fa-leaf"></i> MyEnergy</div>
+
+        <div id="login-section">
+            <h2>Bentornato!</h2>
+            <p class="subtitle">Inserisci le credenziali per accedere.</p>
+            
+            <div id="login-error" class="alert error"><i class="fas fa-exclamation-circle"></i> <span id="login-error-text"></span></div>
+
+            <div class="form-group">
+                <label>Indirizzo Email</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope icon-left"></i>
+                    <input type="email" id="l-email" placeholder="es. mario.rossi@email.it" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock icon-left"></i>
+                    <input type="password" id="l-pwd" placeholder="••••••••" required>
+                    <i class="fas fa-eye icon-right" onclick="togglePassword('l-pwd', this)"></i>
+                </div>
+            </div>
+            <button class="btn-submit" onclick="login()">Accedi <i class="fas fa-arrow-right"></i></button>
+            <div class="switch-mode">Non hai un account? <a onclick="toggleView()">Registrati ora</a></div>
         </div>
 
-        <form id="form-login" onsubmit="handleLogin(event)">
-            <div class="form-group"><label>Email</label><input type="email" id="login-email" required></div>
-            <div class="form-group"><label>Password</label><input type="password" id="login-pwd" required></div>
-            <button type="submit" id="btn-login">Accedi al Portale</button>
-        </form>
+        <div id="register-section" style="display: none;">
+            <h2>Crea Account</h2>
+            <p class="subtitle">Unisciti a MyEnergy.</p>
 
-        <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
-            <div class="form-group"><label>Nome / Ragione Sociale</label><input type="text" id="reg-name" required></div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-email" required></div>
-            <div class="form-group"><label>Password</label><input type="password" id="reg-pwd" required></div>
+            <div id="reg-error" class="alert error"><i class="fas fa-exclamation-circle"></i> <span id="reg-error-text"></span></div>
+
             <div class="form-group">
-                <label>Tipo Account</label>
-                <select id="reg-type">
-                    <option value="cliente">Privato (Casa)</option>
-                    <option value="azienda">Azienda (Sito Industriale)</option>
-                    <option value="admin">Amministratore</option>
-                </select>
+                <label>Nome o Ragione Sociale</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user icon-left"></i>
+                    <input type="text" id="s-name" placeholder="Mario Rossi">
+                </div>
             </div>
-            <button type="submit" id="btn-register">Crea Account & Accedi</button>
-        </form>
-        <div class="toggle-link" id="toggle-text">Non hai un account? <span onclick="switchTab('register')">Iscriviti</span></div>
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-at icon-left"></i>
+                    <input type="email" id="s-email" placeholder="mario@email.it">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock icon-left"></i>
+                    <input type="password" id="s-pwd" placeholder="Crea una password sicura">
+                    <i class="fas fa-eye icon-right" onclick="togglePassword('s-pwd', this)"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tipo di Account</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-id-badge icon-left"></i>
+                    <select id="s-type">
+                        <option value="cliente">Privato (Impianto Domestico)</option>
+                        <option value="azienda">Azienda (Business B2B)</option>
+                        <option value="admin">Amministratore (Staff Tecnico)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-submit" onclick="register()">Registrati e Accedi <i class="fas fa-user-plus"></i></button>
+            <div class="switch-mode">Hai già un account? <a onclick="toggleView()">Torna al Login</a></div>
+        </div>
     </div>
 
     <script>
-        const API_URL = "http://localhost:3000/api";
+        const API_URL = "api.php";
 
-        function switchTab(type) {
-            const isLogin = type === 'login';
-            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
-            document.getElementById('form-register').classList.toggle('hidden', isLogin);
-            document.getElementById('tab-login').classList.toggle('active', isLogin);
-            document.getElementById('tab-register').classList.toggle('active', !isLogin);
-            document.getElementById('toggle-text').innerHTML = isLogin ? 
-                `Non hai un account? <span onclick="switchTab('register')">Iscriviti ora</span>` :
-                `Hai già un account? <span onclick="switchTab('login')">Accedi</span>`;
+        function toggleView() {
+            const loginSec = document.getElementById('login-section');
+            const regSec = document.getElementById('register-section');
+            document.getElementById('login-error').style.display = 'none';
+            document.getElementById('reg-error').style.display = 'none';
+            
+            if(loginSec.style.display === 'none') {
+                loginSec.style.display = 'block';
+                regSec.style.display = 'none';
+            } else {
+                loginSec.style.display = 'none';
+                regSec.style.display = 'block';
+            }
         }
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pwd = document.getElementById('login-pwd').value;
-            const btn = document.getElementById('btn-login');
-            btn.innerText = "Verifica..."; btn.disabled = true;
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        // Invio con tasto Enter
+        document.getElementById("l-pwd").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { event.preventDefault(); login(); }
+        });
+
+        function redirectUser(type) {
+            if (type === 'admin') window.location.href = 'admin.html';
+            else if (type === 'azienda') window.location.href = 'dashboard_azienda.html';
+            else window.location.href = 'dashboard.html';
+        }
+
+        function showError(id, message) {
+            const box = document.getElementById(id);
+            document.getElementById(id + '-text').innerText = message;
+            box.style.display = 'flex';
+        }
+
+        async function login() {
+            const email = document.getElementById('l-email').value;
+            const pwd = document.getElementById('l-pwd').value;
+
+            if(!email || !pwd) { showError('login-error', 'Inserisci email e password.'); return; }
 
             try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                const res = await fetch(`${API_URL}?action=login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, pwd })
                 });
-                const user = await response.json();
-                if (response.ok) {
+                const user = await res.json();
+                
+                if (user.error) {
+                    showError('login-error', 'Credenziali errate. Riprova.');
+                } else {
                     localStorage.setItem('myenergy_session', JSON.stringify(user));
-                    if(user.type === 'admin') window.location.href = 'admin.html';
-                    else if(user.type === 'azienda') window.location.href = 'dashboard_azienda.html';
-                    else window.location.href = 'dashboard.html';
-                } else { alert("Errore: " + user.error); btn.innerText = "Accedi al Portale"; btn.disabled = false; }
-            } catch (err) { alert("Server offline!"); btn.innerText = "Accedi al Portale"; btn.disabled = false; }
+                    redirectUser(user.type);
+                }
+            } catch(e) {
+                showError('login-error', 'Errore di connessione al server.');
+            }
         }
 
-        async function handleRegister(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btn-register');
-            btn.innerText = "Creazione..."; btn.disabled = true;
-            const data = {
-                name: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value,
-                pwd: document.getElementById('reg-pwd').value, type: document.getElementById('reg-type').value
-            };
+        async function register() {
+            const name = document.getElementById('s-name').value;
+            const email = document.getElementById('s-email').value;
+            const pwd = document.getElementById('s-pwd').value;
+            const type = document.getElementById('s-type').value;
+
+            if(!name || !email || !pwd) { showError('reg-error', 'Compila tutti i campi.'); return; }
 
             try {
-                const response = await fetch(`${API_URL}/register`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+                const res = await fetch(`${API_URL}?action=register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, pwd, type })
                 });
-                const result = await response.json();
-                if (response.ok) {
-                    localStorage.setItem('myenergy_session', JSON.stringify(result.user));
-                    if(result.user.type === 'admin') window.location.href = 'admin.html';
-                    else if(result.user.type === 'azienda') window.location.href = 'dashboard_azienda.html';
-                    else window.location.href = 'dashboard.html';
-                } else { alert("Errore: " + result.error); btn.innerText = "Crea Account & Accedi"; btn.disabled = false; }
-            } catch (err) { alert("Errore di connessione."); btn.innerText = "Crea Account & Accedi"; btn.disabled = false; }
+                const result = await res.json();
+                
+                if (result.success) {
+                    const userData = { name, email, type };
+                    localStorage.setItem('myenergy_session', JSON.stringify(userData));
+                    redirectUser(type);
+                } else {
+                    showError('reg-error', result.error || 'Email già registrata.');
+                }
+            } catch(e) {
+                showError('reg-error', 'Errore di connessione.');
+            }
         }
     </script>
 </body>
